@@ -12,7 +12,7 @@ And then, you can just follow these step to use it.
 > 2. Check the box next to Developer Mode.
 > 3. Click Load Unpacked Extension and select the directory for your "Hello Extensions" extension.
 
-If you are confused, please visit the page [https://developer.chrome.com/extensions](https://developer.chrome.com/extensions click go to developer site of chrome extension.)
+If you are confused, please visit the page [https://developer.chrome.com/extensions](https://developer.chrome.com/extensions "click go to developer site of chrome extension.")
 
 ## how to use
 
