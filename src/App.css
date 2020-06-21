@@ -1,0 +1,60 @@
+header {
+  font-size: 32px;
+  height: 55px;
+  width: 100vw;
+  background: #ffc1072e;
+  line-height: 55px;
+}
+
+header > span.logo {
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  background-size: 100% 100%;
+  background-image: url(./images/logo.png);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+header > span.title {
+  margin-left: 25px;
+}
+
+main {
+  height: calc(100vh - 55px - 44px);
+  width: calc(100vw - 220px - 44px);
+  position: absolute;
+  left: 220px;
+  top: 55px;
+  padding: 12px;
+  overflow-y: scroll;
+}
+
+aside {
+  height: calc(100vh - 55px);
+  width: 220px;
+  position: absolute;
+  left: 0;
+  top: 55px;
+  background: #0096882e;
+}
+
+.aside_title{
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  text-indent: 14px;
+}
+
+.aside_title > .add {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-size: 100% 100%;
+  background-image: url(./images/add.png);
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  cursor: pointer;
+}

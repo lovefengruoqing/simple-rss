@@ -1,0 +1,33 @@
+.treeItems{
+  margin-top: 20px;
+}
+
+.treeItems>li{
+  margin-left: 30px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.treeItems .modify{
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-size: 100% 100%;
+  background-image: url(./images/modify.png);
+  position: absolute;
+  right: 30px;
+  top: 0;
+  cursor: pointer;
+}
+
+.treeItems .delete{
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-size: 100% 100%;
+  background-image: url(./images/delete.png);
+  position: absolute;
+  right: 10px;
+  top: 0;
+  cursor: pointer;
+}
