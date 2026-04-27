@@ -1,19 +1,36 @@
-export type oneItemProp = { title: string, rss: string };
-export type ListProp = Array<oneItemProp>;
-
-export type feedItemProp = {
-  author: string;
-  content: string;
-  description: string;
-  link: string;
-   pubDate: string;
-    title: string;
-};
-export type feedProp = {
-  link: string;
-  title: string;
-  description: string;
-};
-export type ContentProp = {
-  status: string, feed: feedProp, items: Array<feedItemProp>
+export interface oneItemProp {
+  id: string
+  title: string
+  rss: string
+  lastUpdated?: number
+  isUpdating?: boolean
 }
+
+export type ListProp = oneItemProp[]
+
+export interface feedItemProp {
+  id: string
+  author: string
+  content: string
+  description: string
+  link: string
+  pubDate: string
+  title: string
+  isRead?: boolean
+  isFavorite?: boolean
+  dateAdded?: number
+}
+
+export interface feedProp {
+  link: string
+  title: string
+  description: string
+}
+
+export interface ContentProp {
+  status: string
+  feed: feedProp
+  items: feedItemProp[]
+  lastUpdated?: number
+}
+

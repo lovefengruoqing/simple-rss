@@ -1,10 +1,21 @@
-import React, {FC} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './styles/index.css'
 
-import './options.css';
-import App from './App';
+console.log('Options script loaded')
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('root'),
-);
+const container = document.getElementById('root')
+console.log('Root container:', container)
+
+if (container) {
+  console.log('Creating React root and rendering App')
+  const root = createRoot(container)
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  )
+} else {
+  console.error('Root container not found!')
+}

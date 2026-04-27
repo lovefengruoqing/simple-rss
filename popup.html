@@ -1,28 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Simple RSS</title>
     <style>
-      body {
-        background: #fff;
-        width: 280px;
-        height: 350px;
-        padding: 1em;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      a[target="management"] {
+
+      body {
+        width: 340px;
+        min-height: 380px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 0;
+        margin: 0;
+      }
+
+      .popup-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        margin: 10px;
+        padding: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .popup-header {
+        text-align: center;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      .popup-header h2 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2d3748;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stats-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .stat-item {
+        flex: 1;
+        text-align: center;
+        padding: 8px 4px;
+        background: #f8fafc;
+        border-radius: 8px;
+      }
+
+      .stat-item .num {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1;
+      }
+
+      .stat-item .label {
+        font-size: 10px;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+
+      .stat-item.unread .num { color: #ef4444; }
+      .stat-item.favorites .num { color: #f59e0b; }
+
+      .open-btn {
+        display: block;
+        width: 100%;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+        text-align: center;
         text-decoration: none;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .open-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      }
+
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .article-list {
+        list-style: none;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .article-list::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .article-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .article-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 2px;
+      }
+
+      .article-item {
+        padding: 8px 10px;
+        margin-bottom: 4px;
+        background: #f8fafc;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .article-item:hover {
+        background: #f1f5f9;
+        border-left-color: #667eea;
+      }
+
+      .article-item.unread {
+        border-left-color: #667eea;
+      }
+
+      .article-feed {
+        font-size: 10px;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .article-title {
+        font-size: 12px;
+        color: #1e293b;
+        font-weight: 500;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .article-meta {
+        display: flex;
+        gap: 8px;
+        margin-top: 3px;
+        font-size: 10px;
+        color: #94a3b8;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 20px 10px;
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      .empty-state .icon {
+        font-size: 28px;
+        margin-bottom: 6px;
       }
     </style>
   </head>
   <body>
-    <div>
-      <button class="open">
-        <a href="options.html" target="management">打开 rss 管理界面</a>
+    <div class="popup-container">
+      <div class="popup-header">
+        <h2>📡 Simple RSS</h2>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="num" id="total-count">—</div>
+          <div class="label">总文章</div>
+        </div>
+        <div class="stat-item unread">
+          <div class="num" id="unread-count">—</div>
+          <div class="label">未读</div>
+        </div>
+        <div class="stat-item favorites">
+          <div class="num" id="favorites-count">—</div>
+          <div class="label">收藏</div>
+        </div>
+      </div>
+      <button class="open-btn" id="open-options">
+        ⚙️ 打开管理页面
       </button>
-      <ol class="itemList"></ol>
+      <div class="section-title">🕒 最新文章</div>
+      <ul class="article-list" id="article-list"></ul>
     </div>
-    <script src="popup.js"></script>
+    <script type="module" src="/src/popup.ts"></script>
   </body>
 </html>

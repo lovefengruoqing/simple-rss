@@ -1,9 +1,8 @@
-import React, {FC, useEffect, useState} from 'react';
-import ReactDOM from 'react-dom';
+import {FC, useState} from 'react';
 
-import './AddItem.css';
+import './../styles/AddItem.css';
 
-import {oneItemProp, ListProp} from './Props';
+import {oneItemProp} from './../Props';
 
 const AddItem: FC<{
   hidden: () => void;
@@ -17,7 +16,7 @@ const AddItem: FC<{
     <div className="addItem">
       <div>
         <h2>新增一个 RSS 订阅</h2>
-        <div>
+        <div className="form-group">
           <label htmlFor="title">标题：</label>
           <input
             type="text"
@@ -27,10 +26,10 @@ const AddItem: FC<{
             onChange={(e) => {
               setTitle(e.target.value);
             }}
-          ></input>
+          />
         </div>
-        <div>
-          <label htmlFor="title">RSS 地址：</label>
+        <div className="form-group">
+          <label htmlFor="rss">RSS 地址：</label>
           <input
             type="url"
             id="rss"
@@ -39,17 +38,18 @@ const AddItem: FC<{
             onChange={(e) => {
               setRss(e.target.value);
             }}
-          ></input>
+          />
         </div>
-        <div>
+        <div className="button-group">
           <button
             onClick={() => {
               if (title === '') return;
               if (rss === '') return;
 
-              addOneRecord({title, rss}, cur);
+              addOneRecord({id: '', title, rss}, cur);
               hidden();
             }}
+            disabled={!title || !rss}
           >
             确定
           </button>

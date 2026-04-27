@@ -1,9 +1,9 @@
 {
-  "name": "Image hosting",
+  "name": "Simple RSS",
   "version": "1.0",
-  "description": "Your own image hosting!",
-  "manifest_version": 2,
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "description": "A simple RSS extension for Chrome.",
+  "manifest_version": 3,
+  "permissions": ["storage", "activeTab"],
   "options_page": "options.html",
   "icons": {
     "16": "images/logo.png",
@@ -11,18 +11,17 @@
     "48": "images/logo.png",
     "128": "images/logo.png"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "images/logo.png",
       "32": "images/logo.png",
       "48": "images/logo.png",
       "128": "images/logo.png"
     },
-    "default_title": "stock helper",
+    "default_title": "Simple RSS",
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "background.js"
   }
 }

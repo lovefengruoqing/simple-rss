@@ -1,47 +1,83 @@
-import React, {FC, useEffect} from 'react';
-import ReactDOM from 'react-dom';
+import { FC } from "react";
 
-import './TreeItems.css';
+import "./styles/TreeItems.css";
 
-import {oneItemProp, ListProp} from './Props';
+import { oneItemProp, ListProp } from "./Props";
 
 const TreeItems: FC<{
   lists: ListProp;
-  crawlerContent: (url: string) => Promise<void>;
+  crawlerContent: (url: string, index: number) => void;
   deleteOneItem: (index: number) => void;
   modifyOneItem: (oneItem: oneItemProp, index: number) => void;
-}> = ({lists, crawlerContent, deleteOneItem, modifyOneItem}) => {
+  updateFeed: (index: number) => void;
+  selectedIndex?: number;
+}> = ({
+  lists,
+  crawlerContent,
+  deleteOneItem,
+  modifyOneItem,
+  updateFeed,
+  selectedIndex,
+}) => {
   return (
-    <ol className="treeItems">
-      {lists.map(({title, rss}: oneItemProp, index) => {
+    <ul className="tree-items">
+      {lists.map((feed: oneItemProp, index) => {
+        const { title, rss } = feed;
         return (
-          <li data-rss={rss}>
-            <a
-              href="#"
-              onClick={() => {
-                crawlerContent(rss);
-              }}
-            >
-              {title}
-            </a>
-            <span
-              className="modify"
-              onClick={() => {
-                modifyOneItem({title, rss}, index);
-              }}
-              title="modify this rss"
-            ></span>
-            <span
-              className="delete"
-              onClick={() => {
-                deleteOneItem(index);
-              }}
-              title="delete this rss"
-            ></span>
+          <li
+            key={index}
+            className={`tree-item ${selectedIndex === index ? "selected" : ""}`}
+            onClick={() => {
+              crawlerContent(rss, index);
+            }}
+          >
+            <div className="item-content">
+              <span className="item-title">
+                {title}
+              </span>
+              {feed.lastUpdated && (
+                <span className="last-updated">
+                  {new Date(feed.lastUpdated).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <div className="item-actions">
+              <button
+                className={`update-btn ${feed.isUpdating ? "updating" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  updateFeed(index)
+                }}
+                disabled={feed.isUpdating}
+                title="Update feed"
+              >
+                {feed.isUpdating ? "🔄" : "🔁"}
+              </button>
+              <button
+                className="edit-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  modifyOneItem(feed, index)
+                }}
+                title="Edit RSS"
+              >
+                ✏️
+              </button>
+              <button
+                className="delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  deleteOneItem(index)
+                }}
+                title="Delete RSS"
+              >
+                🗑️
+              </button>
+            </div>
           </li>
         );
       })}
-    </ol>
+    </ul>
   );
 };
 
