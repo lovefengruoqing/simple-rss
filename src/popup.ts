@@ -7,6 +7,13 @@ interface GlobalArticle {
   isFavorite?: boolean
 }
 
+interface FeedItem {
+  id: string
+  title: string
+  rss: string
+  lastUpdated?: number
+}
+
 async function getStorageData(keys: string[]): Promise<any> {
   return new Promise((resolve) => {
     chrome.storage.local.get(keys, (result) => {
@@ -28,14 +35,31 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' })
 }
 
+function formatUpdateTime(ts: number): string {
+  const d = new Date(ts)
+  const now = new Date()
+  const diff = now.getTime() - d.getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return '刚刚'
+  if (mins < 60) return `${mins}分钟前`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}小时前`
+  const days = Math.floor(hours / 24)
+  if (days === 1) return '昨天'
+  if (days < 7) return `${days}天前`
+  return d.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
 async function init() {
-  const [articlesData, favoritesData] = await Promise.all([
+  const [articlesData, favoritesData, feedsData] = await Promise.all([
     getStorageData(['rss_global_articles']),
-    getStorageData(['rss_favorites'])
+    getStorageData(['rss_favorites']),
+    getStorageData(['rss_feeds'])
   ])
 
   const articles: GlobalArticle[] = articlesData.rss_global_articles || []
   const favorites = favoritesData.rss_favorites || {}
+  const feeds: FeedItem[] = feedsData.rss_feeds || []
 
   // Stats
   const total = articles.length
@@ -45,6 +69,19 @@ async function init() {
   document.getElementById('total-count')!.textContent = String(total)
   document.getElementById('unread-count')!.textContent = String(unread)
   document.getElementById('favorites-count')!.textContent = String(favCount)
+
+  // Latest update time across all feeds
+  const latestUpdate = feeds.reduce((max: number, f: FeedItem) => {
+    return f.lastUpdated && f.lastUpdated > max ? f.lastUpdated : max
+  }, 0)
+
+  const updateEl = document.getElementById('last-update')!
+  if (latestUpdate > 0) {
+    updateEl.textContent = `🕐 更新于 ${formatUpdateTime(latestUpdate)}`
+    updateEl.style.display = 'block'
+  } else {
+    updateEl.style.display = 'none'
+  }
 
   // Recent articles (sorted by date, newest first, max 10)
   const sorted = [...articles]

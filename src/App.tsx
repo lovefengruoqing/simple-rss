@@ -28,6 +28,19 @@ const App: React.FC = () => {
   const [readTimestamps, setReadTimestamps] = useState<{ [itemId: string]: number }>({})
   const isInitialized = useRef(false)
 
+  const formatTimeAgo = (ts: number): string => {
+    const diff = Date.now() - ts
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return '刚刚'
+    if (mins < 60) return `${mins}分钟前`
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return `${hours}小时前`
+    const days = Math.floor(hours / 24)
+    if (days === 1) return '昨天'
+    if (days < 7) return `${days}天前`
+    return new Date(ts).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  }
+
   const loadGlobalData = useCallback(async () => {
     const [articles, favorites, readArticles, timestamps] = await Promise.all([
       StorageService.getGlobalArticles(),
@@ -390,6 +403,11 @@ const App: React.FC = () => {
               📚 足迹 ({totalRead})
             </button>
           </div>
+          <span className="header-update-time" id="header-update-time">
+            {lists.reduce((max, f) => f.lastUpdated && f.lastUpdated > max ? f.lastUpdated : max, 0) > 0
+              ? `🕐 ${formatTimeAgo(lists.reduce((max, f) => f.lastUpdated && f.lastUpdated > max ? f.lastUpdated : max, 0))}`
+              : ''}
+          </span>
           <button
             className={`update-all-btn ${isUpdatingAll ? 'updating' : ''}`}
             onClick={updateAllFeeds}
